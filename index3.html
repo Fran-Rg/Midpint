@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Mid Pint</title>
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        height: 100%;
+      }
+    </style>
+    <script>
+var map;
+var infoWindow;
+var service;
+
+function initMap() {
+  map = new google.maps.Map(document.getElementById('map'), {
+    center: {lat: 51.5287718, lng: -0.2416803},
+    zoom: 14,
+    mapTypeId: google.maps.MapTypeId.HYBRID,
+    mapTypeControl:false,
+  });
+	//zoom: 18,
+	//tilt: 45,
+  infoWindow = new google.maps.InfoWindow();
+  service = new google.maps.places.PlacesService(map);
+
+  // The idle event is a debounced event, so we can query & listen without
+  // throwing too many requests at the server.
+  map.addListener('idle', performSearch);
+}
+
+function performSearch() {
+  var request = {
+    bounds: map.getBounds(),
+    keyword: 'pub'
+  };
+  service.radarSearch(request, callback);
+}
+
+function callback(results, status) {
+  if (status !== google.maps.places.PlacesServiceStatus.OK) {
+    console.error(status);
+    return;
+  }
+  for (var i = 0, result; result = results[i]; i++) {
+    addMarker(result);
+  }
+}
+
+function addMarker(place) {
+  var marker = new google.maps.Marker({
+    map: map,
+    position: place.geometry.location,
+    icon: {
+      url: 'http://maps.gstatic.com/mapfiles/circle.png',
+      anchor: new google.maps.Point(10, 10),
+      scaledSize: new google.maps.Size(10, 17)
+    }
+  });
+
+  google.maps.event.addListener(marker, 'click', function() {
+    service.getDetails(place, function(result, status) {
+      if (status !== google.maps.places.PlacesServiceStatus.OK) {
+        console.error(status);
+        return;
+      }
+      infoWindow.setContent(result.name);
+      infoWindow.open(map, marker);
+    });
+  });
+}
+
+    </script>
+  </head>
+  <body>
+  <div jstcache="271">
+	  <div id="searchbox" role="search" jstcache="188"
+		   class="searchbox searchbox-shadow noprint directions-button-shown searchbox-empty suggestions-shown "
+		   jsan="7.searchbox,7.searchbox-shadow,7.noprint,0.id,0.role">
+		  <div class="searchbox-searchbutton-container">
+			  <button aria-label="Rechercher" guidedhelpid="searchbutton"
+					  jsaction="omnibox.search;mouseover:omnibox.showTooltip;mouseout:omnibox.hideTooltip;focus:omnibox.showTooltip;blur:omnibox.hideTooltip"
+					  class="searchbox-searchbutton"></button>
+			  <span aria-hidden="true" class="omnibox-tooltip kd-tooltip-dark">Rechercher</span></div>
+		  <a class="gsst_a" href="javascript:void(0)" role="button" tooltip="Clear Search" guidedhelpid="clear_search"
+			 style="visibility: hidden;"><span class="sbcb_a" id="sb_cb50" aria-label="Clear Search"></span></a></div>
+  </div>
+  <div id="map"></div>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA7zckZF4jsLrgbOAnvpzxhNhMy9RkuBK8&callback=initMap&signed_in=true&libraries=places,visualization"
+		  async defer></script>
+  </body>
+</html>

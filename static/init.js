@@ -1,0 +1,4 @@
+function initGlobal(){
+	initMap();
+	initUI();
+}
