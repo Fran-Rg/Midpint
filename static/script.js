@@ -1,5 +1,3 @@
-var $bodyEl;
-var $sidedrawerEl;
 // ==========================================================================
 // Toggle Sidedrawer
 // ==========================================================================
@@ -7,7 +5,7 @@ function showSidedrawer() {
 	// show overlay
 	var options = {
 		onclose: function() {
-			$sidedrawerEl
+			$('#sidedrawer')
 				.removeClass('active')
 				.appendTo(document.body);
 		}
@@ -16,45 +14,45 @@ function showSidedrawer() {
 	var $overlayEl = $(mui.overlay('on', options));
 
 	// show element
-	$sidedrawerEl.appendTo($overlayEl);
+	$('#sidedrawer').appendTo($overlayEl);
 	setTimeout(function() {
-		$sidedrawerEl.addClass('active');
+		$('#sidedrawer').addClass('active');
 	}, 20);
 }
 
 
 function hideSidedrawer() {
-	$bodyEl.toggleClass('hide-sidedrawer');
+	$('body').toggleClass('hide-sidedrawer');
 }
 
 // ==========================================================================
 // Animate menu
 // ==========================================================================
-var $titleEls = $('strong', $sidedrawerEl);
 
-$titleEls.on('click', function() {
+$('strong', $('#sidedrawer')).on('click', function() {
 	$(this).next().slideToggle(200);
 });
 
-var npinter = 1;
+var pint_autocompletes = []
 function addPinter()
 {
-	$( ".pinter-list" ).append( "<form><div class='mui-textfield mui-textfield--float-label'><input id='pstart"+npinter+"' type='text'><label>Pint start "+npinter+"</label></div></form>")
-	$("#pstart"+npinter).css('background-color', 'rgba('+Math.floor((Math.random()*255))+','+Math.floor((Math.random()*255))+','+Math.floor((Math.random()*255))+',0.2)');
-//	console.log($("#pstart"+npinter).css('background-color'))
-	new google.maps.places.Autocomplete((document.getElementById('pstart'+npinter)));
-	npinter += 1;
+	var npinter = pint_autocompletes.length+1;
+	var color = [Math.floor(Math.random()*255),Math.floor(Math.random()*255),Math.floor(Math.random()*255)]
+	$( ".pinter-list" ).append( "<div class='mui-textfield'><input id='pstart"+npinter+"' class='input-pinter' type='text'><label>Pint start "+npinter+"</label></div>")
+	$("#pstart"+npinter).css('background-color', 'rgba('+color[0]+','+color[1]+','+color[2]+',0.2)');
+	pint_autocomplete = new google.maps.places.Autocomplete((document.getElementById('pstart'+npinter)));
+	pint_autocomplete.color = color;
+	pint_autocompletes.push(pint_autocomplete);
 }
 
 function initUI()
 {
-	$bodyEl = $('body');
-	$sidedrawerEl = $('#sidedrawer');
 	for(var i=0;i<2;++i)
 		addPinter()
-	$titleEls
+	$('strong', $('#sidedrawer'))
 		.next()
 		.hide();
 	$('.js-show-sidedrawer').on('click', showSidedrawer);
 	$('.js-hide-sidedrawer').on('click', hideSidedrawer);
+	$('.js-add-pinter').on('click', addPinter);
 }

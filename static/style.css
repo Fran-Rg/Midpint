@@ -20,7 +20,9 @@ buttons {
   -moz-osx-font-smoothing: grayscale;
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004);
 }
-
+.mui-appbar{
+  background: rgba(33,150,243,.7);
+}
 
 /**
  * Layout CSS
